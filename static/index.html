@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vehicle Mileage Predictor | Deep Learning Engine</title>
+  <meta name="description" content="Predict petrol and diesel vehicle mileage (km/L) using deep learning regression with ethanol blend support." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css?v=2.1" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-content">
+        <div class="brand-tag">
+          <span class="dot-indicator"></span>
+          <span>TensorFlow Neural Network Engine</span>
+        </div>
+        <h1 class="main-title">Vehicle Mileage Prediction System</h1>
+        <p class="subtitle">
+          Select vehicle specifications, fuel type (Petrol/Diesel), and Ethanol blend (E0/E10/E20) to compute mileage and running costs.
+        </p>
+      </div>
+
+      <div class="stats-pills">
+        <div class="stat-pill">
+          <span class="pill-label">Dataset Baseline</span>
+          <span class="pill-value" id="stat-avg-kml">9.97 km/L</span>
+        </div>
+        <div class="stat-pill">
+          <span class="pill-label">Model Accuracy</span>
+          <span class="pill-value">MAE 3.50</span>
+        </div>
+        <div class="stat-pill">
+          <span class="pill-label">Supported Years</span>
+          <span class="pill-value">1970 - 2026</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="workspace-grid">
+      <!-- Left: Input Controls -->
+      <section class="card config-card">
+        <div class="card-header">
+          <div>
+            <h2>Vehicle Parameters</h2>
+            <p class="header-desc">Select a preset car model or configure custom technical specifications</p>
+          </div>
+        </div>
+
+        <form id="prediction-form" class="config-form">
+          <!-- Preset Car Selection Dropdown -->
+          <div class="form-group preset-group">
+            <label for="car-preset-select" class="form-label">
+              <span>Choose Car Model (Auto-Fill)</span>
+              <span class="badge-subtle">300+ Models Available</span>
+            </label>
+            <div class="select-wrapper">
+              <select id="car-preset-select" class="custom-select">
+                <option value="">-- Choose Car from Database --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="divider"><span>SPECIFICATIONS & FUEL SETUP</span></div>
+
+          <!-- Fuel Type and Ethanol Blend Selection -->
+          <div class="input-grid-2">
+            <!-- Fuel Type (Petrol / Diesel) -->
+            <div class="form-group">
+              <label for="fuel-type-select" class="form-label">Fuel Type</label>
+              <div class="select-wrapper">
+                <select id="fuel-type-select" name="fuel_type" class="custom-select" required>
+                  <option value="petrol" selected>Petrol (Gasoline)</option>
+                  <option value="diesel">Diesel</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Ethanol Blend (E0 / E10 / E20) -->
+            <div class="form-group" id="ethanol-group">
+              <label for="ethanol-select" class="form-label">
+                <span>Petrol Ethanol Blend</span>
+                <span class="badge-subtle" id="ethanol-badge">Standard E10</span>
+              </label>
+              <div class="select-wrapper">
+                <select id="ethanol-select" name="ethanol_blend" class="custom-select">
+                  <option value="E0">E0 (Pure Petrol - 0% Ethanol)</option>
+                  <option value="E10" selected>E10 (10% Ethanol Blend - Standard)</option>
+                  <option value="E20">E20 (20% Ethanol Blend - Flex/Current)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cylinders and Region -->
+          <div class="input-grid-2">
+            <!-- Engine Cylinders -->
+            <div class="form-group">
+              <label for="cylinders-select" class="form-label">Engine Cylinders</label>
+              <div class="select-wrapper">
+                <select id="cylinders-select" name="cylinders" class="custom-select" required>
+                  <option value="3">3 Cylinders (Compact / Hatchback)</option>
+                  <option value="4" selected>4 Cylinders (Sedan / Standard)</option>
+                  <option value="5">5 Cylinders (Inline-5)</option>
+                  <option value="6">6 Cylinders (V6 / SUV)</option>
+                  <option value="8">8 Cylinders (V8 Performance)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Region of Origin -->
+            <div class="form-group">
+              <label for="origin-select" class="form-label">Manufacturing Origin</label>
+              <div class="select-wrapper">
+                <select id="origin-select" name="origin" class="custom-select" required>
+                  <option value="1" selected>USA (Domestic)</option>
+                  <option value="2">Europe</option>
+                  <option value="3">Japan / Asia</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Model Year (1970 - 2026) and 0-100 Acceleration -->
+          <div class="input-grid-2">
+            <!-- Model Year -->
+            <div class="form-group">
+              <label for="model-year-select" class="form-label">Model Year (1970 - 2026)</label>
+              <div class="select-wrapper">
+                <select id="model-year-select" name="model_year" class="custom-select" required>
+                  <option value="2026">2026</option>
+                  <option value="2025">2025</option>
+                  <option value="2024" selected>2024 (Modern Standard)</option>
+                  <option value="2023">2023</option>
+                  <option value="2022">2022</option>
+                  <option value="2021">2021</option>
+                  <option value="2020">2020</option>
+                  <option value="2019">2019</option>
+                  <option value="2018">2018</option>
+                  <option value="2017">2017</option>
+                  <option value="2016">2016</option>
+                  <option value="2015">2015</option>
+                  <option value="2014">2014</option>
+                  <option value="2013">2013</option>
+                  <option value="2012">2012</option>
+                  <option value="2011">2011</option>
+                  <option value="2010">2010</option>
+                  <option value="2009">2009</option>
+                  <option value="2008">2008</option>
+                  <option value="2007">2007</option>
+                  <option value="2006">2006</option>
+                  <option value="2005">2005</option>
+                  <option value="2004">2004</option>
+                  <option value="2003">2003</option>
+                  <option value="2002">2002</option>
+                  <option value="2001">2001</option>
+                  <option value="2000">2000</option>
+                  <option value="1999">1999</option>
+                  <option value="1998">1998</option>
+                  <option value="1997">1997</option>
+                  <option value="1996">1996</option>
+                  <option value="1995">1995</option>
+                  <option value="1994">1994</option>
+                  <option value="1993">1993</option>
+                  <option value="1992">1992</option>
+                  <option value="1991">1991</option>
+                  <option value="1990">1990</option>
+                  <option value="1989">1989</option>
+                  <option value="1988">1988</option>
+                  <option value="1987">1987</option>
+                  <option value="1986">1986</option>
+                  <option value="1985">1985</option>
+                  <option value="1984">1984</option>
+                  <option value="1983">1983</option>
+                  <option value="1982">1982 (Auto-MPG Dataset)</option>
+                  <option value="1981">1981</option>
+                  <option value="1980">1980</option>
+                  <option value="1979">1979</option>
+                  <option value="1978">1978</option>
+                  <option value="1977">1977</option>
+                  <option value="1976">1976</option>
+                  <option value="1975">1975</option>
+                  <option value="1974">1974</option>
+                  <option value="1973">1973</option>
+                  <option value="1972">1972</option>
+                  <option value="1971">1971</option>
+                  <option value="1970">1970</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 0-100 km/h Acceleration -->
+            <div class="form-group">
+              <div class="label-with-value">
+                <label for="acceleration-input" class="form-label">0-100 km/h Time</label>
+                <span class="value-badge" id="acceleration-display">15.5 s</span>
+              </div>
+              <div class="range-container">
+                <input type="range" id="acceleration-range" min="5.0" max="25.0" step="0.5" value="15.5" class="custom-range" />
+                <input type="number" id="acceleration-input" name="acceleration" min="5.0" max="25.0" step="0.1" value="15.5" class="custom-num-input" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Horsepower Control -->
+          <div class="form-group">
+            <div class="label-with-value">
+              <label for="horsepower-input" class="form-label">Engine Horsepower (BHP)</label>
+              <span class="value-badge" id="horsepower-display">100 BHP</span>
+            </div>
+            <div class="range-container">
+              <input type="range" id="horsepower-range" min="40" max="350" step="1" value="100" class="custom-range" />
+              <input type="number" id="horsepower-input" name="horsepower" min="40" max="350" value="100" class="custom-num-input" />
+            </div>
+          </div>
+
+          <!-- Vehicle Weight Control -->
+          <div class="form-group">
+            <div class="label-with-value">
+              <label for="weight-input" class="form-label">Vehicle Curb Weight (lbs / kg)</label>
+              <span class="value-badge" id="weight-display">2800 lbs (~1270 kg)</span>
+            </div>
+            <div class="range-container">
+              <input type="range" id="weight-range" min="1500" max="5500" step="25" value="2800" class="custom-range" />
+              <input type="number" id="weight-input" name="weight" min="1500" max="5500" value="2800" class="custom-num-input" />
+            </div>
+          </div>
+
+          <!-- Running Cost Parameters in INR -->
+          <details class="advanced-settings">
+            <summary class="settings-summary">
+              <span>Fuel Price & Travel Assumptions (in ₹ INR)</span>
+              <span class="chevron">&#9662;</span>
+            </summary>
+            <div class="settings-content input-grid-2">
+              <div class="form-group">
+                <label for="annual-distance" class="form-label">Annual Distance (km / year)</label>
+                <input type="number" id="annual-distance" name="annual_distance_km" value="15000" step="1000" class="custom-text-input" />
+              </div>
+              <div class="form-group">
+                <label for="fuel-price" class="form-label">Fuel Price per Liter (₹ INR)</label>
+                <input type="number" id="fuel-price" name="fuel_price_inr" value="102.50" step="0.50" class="custom-text-input" />
+              </div>
+            </div>
+          </details>
+
+          <!-- Submit Buttons -->
+          <div class="form-actions">
+            <button type="submit" id="predict-btn" class="btn btn-primary">
+              <span>Compute Mileage</span>
+            </button>
+            <button type="button" id="reset-btn" class="btn btn-secondary">
+              <span>Reset</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Right: Prediction Results & Economic Analysis -->
+      <section class="results-column">
+        <!-- Main Result Card -->
+        <div class="card result-hero-card">
+          <div class="card-header">
+            <div>
+              <h2>Predicted Fuel Mileage</h2>
+              <p class="header-desc" id="fuel-desc-label">Estimated Output for Petrol (E10 Blend)</p>
+            </div>
+            <div id="grade-badge" class="grade-badge">
+              <span id="grade-letter">A</span>
+              <span id="grade-label">High Efficiency</span>
+            </div>
+          </div>
+
+          <!-- Radial Meter -->
+          <div class="gauge-display-container">
+            <div class="gauge-visual">
+              <svg class="radial-gauge-svg" viewBox="0 0 200 200">
+                <circle class="gauge-bg-circle" cx="100" cy="100" r="80" />
+                <circle class="gauge-progress-circle" id="gauge-circle" cx="100" cy="100" r="80" />
+              </svg>
+              <div class="gauge-center-content">
+                <span class="gauge-value" id="kml-value">--</span>
+                <span class="gauge-unit">km / Liter</span>
+              </div>
+            </div>
+
+            <div class="conversions-grid">
+              <div class="conversion-item">
+                <span class="conv-label">Miles Per Gallon (US)</span>
+                <span class="conv-value" id="mpg-value">-- MPG</span>
+              </div>
+              <div class="conversion-item">
+                <span class="conv-label">Consumption (L / 100 km)</span>
+                <span class="conv-value" id="l100-value">-- L/100km</span>
+              </div>
+              <div class="conversion-item comparison-item" id="comparison-box">
+                <span class="conv-label">Dataset Baseline (9.97 km/L)</span>
+                <span class="conv-value" id="diff-value">--</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Financial Running Costs in Indian Rupees (₹) -->
+          <div class="metrics-row">
+            <div class="metric-card">
+              <div class="metric-details">
+                <span class="metric-label">Running Cost per km</span>
+                <span class="metric-value" id="cost-per-km">&#8377; -- / km</span>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-details">
+                <span class="metric-label">Est. Monthly Fuel Expense</span>
+                <span class="metric-value" id="monthly-cost">&#8377; --</span>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-details">
+                <span class="metric-label">Est. Annual Fuel Expense</span>
+                <span class="metric-value" id="annual-cost">&#8377; --</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparison History Table -->
+        <div class="card history-card">
+          <div class="card-header">
+            <div>
+              <h3>Vehicle Comparison Log</h3>
+              <p class="header-desc">Session test records</p>
+            </div>
+            <button id="clear-history-btn" class="btn-link">Clear Table</button>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="history-table" id="history-table">
+              <thead>
+                <tr>
+                  <th>Vehicle / Preset</th>
+                  <th>Fuel</th>
+                  <th>Year</th>
+                  <th>Cyl</th>
+                  <th>HP</th>
+                  <th>Mileage (km/L)</th>
+                  <th>Cost / km</th>
+                </tr>
+              </thead>
+              <tbody id="history-body">
+                <tr class="empty-row">
+                  <td colspan="7">No test records yet. Select a car model or click Compute Mileage.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Technical Architecture Section -->
+    <section class="card insights-card">
+      <div class="card-header">
+        <div>
+          <h3>System Architecture & Technical Specifications</h3>
+          <p class="header-desc">Deep Neural Network regression pipeline with domain adjustments</p>
+        </div>
+      </div>
+
+      <div class="insights-grid">
+        <div class="insight-box">
+          <h4>Neural Network Topology</h4>
+          <ul class="specs-list">
+            <li><strong>Architecture:</strong> Deep Sequential Multi-Layer Perceptron (TensorFlow 2.x & Keras)</li>
+            <li><strong>Input Dimension:</strong> 6 core mechanical features (Cylinders, Horsepower, Weight, Acceleration, Year, Origin)</li>
+            <li><strong>Regularization:</strong> Batch Normalization and 30% Dropout layers to eliminate overfitting</li>
+            <li><strong>Loss & Metric:</strong> Mean Absolute Error (MAE) and Mean Absolute Percentage Error (MAPE)</li>
+          </ul>
+        </div>
+
+        <div class="insight-box">
+          <h4>Fuel & Blend Chemistry Multipliers</h4>
+          <ul class="specs-list">
+            <li><strong>Diesel Engine:</strong> Higher compression ratio & energy density (+20% thermal efficiency)</li>
+            <li><strong>E0 Pure Petrol:</strong> 100% pure gasoline energy density benchmark (+2.5% vs E10)</li>
+            <li><strong>E10 Blend (Standard):</strong> 10% ethanol blend (baseline calibration)</li>
+            <li><strong>E20 Blend (Modern):</strong> 20% ethanol blend (~4.5% energy density reduction compensated by high octane)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Auto-MPG Vehicle Mileage Engine • Deep Learning & Automotive Analytics</p>
+    </footer>
+  </div>
+
+  <script src="/static/app.js?v=2.1"></script>
+</body>
+</html>

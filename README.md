@@ -117,6 +117,53 @@ This will:
 
 ---
 
+## 💻 Interactive Vehicle Mileage Prediction Web Application
+
+A standard high-contrast **Black & White** Web UI is included in the project, allowing users to select vehicles from a database of over 300 cars or configure custom vehicle specifications with dropdowns and sliders.
+
+### ✨ Web Application Features
+
+1. **Monochrome High-Contrast Theme (No Emojis):**
+   - Clean, professional Black & White visual aesthetic.
+   - High-contrast dropdown menus with explicit background and text styling for optimal readability across all browsers and operating systems.
+
+2. **Full Year Range (1970 – 2026):**
+   - Supports vehicle model years from **1970 up to 2026**.
+
+3. **Fuel Type & Ethanol Blending:**
+   - **Fuel Type:** Select between **Petrol** and **Diesel**.
+   - **Petrol Ethanol Blends:** Choose between **E0** (Pure Petrol), **E10** (10% Ethanol Blend), and **E20** (20% Ethanol Blend).
+
+4. **Indian Rupee (₹ INR) Running Cost Analytics:**
+   - Primary metric: **Predicted Mileage (km/L)**, along with **MPG** and **L/100km**.
+   - Running cost calculations in **Indian Rupees (₹)**:
+     - Running Cost per km (`₹ / km`)
+     - Estimated Monthly Fuel Expense (`₹ / month`)
+     - Estimated Annual Fuel Expense (`₹ / year`)
+
+5. **Preset Car Database (Auto-Fill):**
+   - Auto-fills specifications from 300+ car models (*Ford, Chevrolet, Toyota, Datsun, Volkswagen, etc.*).
+
+---
+
+## 🚀 How to Run the Web Application
+
+### 1. Start the Application Server
+Run the FastAPI backend with Uvicorn:
+
+```bash
+python app.py
+```
+*(or `.venv\Scripts\python.exe -m uvicorn app:app --host 127.0.0.1 --port 8000`)*
+
+### 2. Access the UI
+Open your browser and navigate to:
+```
+http://127.0.0.1:8000
+```
+
+---
+
 ## 📈 Results & Key Observations
 
 - **Training Performance:** Training Loss (MAE) consistently decreases across 50 epochs down to ~3.5 MPG (MAPE ~16%).
